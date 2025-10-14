@@ -1,20 +1,25 @@
 import express from "express"
 import judgesSchema from "../models/judges.js"
 import {
+    createJudge,
     getJudges,
     postVote,
     getVotesByJudgeId,
     getVotesByGameId,
     getAverageScoresByGameId,
 } from "../controllers/judgesController.js"
+import { authRequire, requireRole } from "../middleware/validateToken.js"
 
 const judgesRoutes = express.Router()
 
-//traer los jueces
+//traer los jueces (público)
 judgesRoutes.get("/", getJudges)
 
-// votar a un juego [judgeId y gameId por el body]
-judgesRoutes.post("/", postVote)
+// crear juez (solo admin)
+judgesRoutes.post("/", authRequire, requireRole('admin'), createJudge)
+
+// votar a un juego (solo jueces) [judgeId y gameId por el body]
+judgesRoutes.post("/vote", authRequire, requireRole('juez'), postVote)
 
 judgesRoutes.get("/judge/:judgeId", getVotesByJudgeId)
 

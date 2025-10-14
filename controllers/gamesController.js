@@ -4,12 +4,26 @@ import {
     addGame,
     updateGame,
     getGamesByEditionSorted,
+    getAllGamesSortedByScore,
     // deleteGame,
 } from "../services/gamesService.js"
 
 const createGame = async (req, res) => {
-    const createdGame = await addGame(req.body)
-    res.json(createdGame)
+    try {
+        console.log('=== CREATING GAME ===')
+        console.log('User from token:', req.user)
+        console.log('Request body:', req.body)
+
+        const createdGame = await addGame(req.body)
+
+        console.log('Game created:', createdGame)
+        console.log('===================')
+
+        res.json(createdGame)
+    } catch (error) {
+        console.error('Error creating game:', error)
+        res.status(500).json({ message: 'Error al crear el juego', error: error.message })
+    }
 }
 
 const getAllGames = async (req, res) => {
@@ -40,6 +54,11 @@ const getGamesByEditionSortedController = async (req, res) => {
     res.json(games)
 }
 
+const getAllGamesSortedByScoreController = async (req, res) => {
+    const games = await getAllGamesSortedByScore()
+    res.json(games)
+}
+
 // const deleteGameById = async (req, res) => {
 //     const { id } = req.body;
 //     const deletedGame = await deleteGame(id);
@@ -52,5 +71,6 @@ export {
     getGameById,
     updateGameById,
     getGamesByEditionSortedController,
+    getAllGamesSortedByScoreController,
     // deleteGameById
 }

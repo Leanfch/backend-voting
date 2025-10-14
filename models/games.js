@@ -4,14 +4,17 @@ const gameSchema = Schema({
     name: {
         type: String,
         required: true,
+        trim: true
     },
     genre: {
         type: String,
         required: true,
+        trim: true
     },
     members: {
         type: Array,
-        required: true,
+        required: false,
+        default: []
     },
     edition: {
         type: Number,
@@ -21,6 +24,11 @@ const gameSchema = Schema({
         type: Number,
         default: 0,
     },
+    photo: {
+        type: String,
+        required: false,
+        default: ''
+    }
 })
 
 const Game = model("Games", gameSchema)

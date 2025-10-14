@@ -1,14 +1,13 @@
 import gameSchema from "../models/games.js"
 
-const addGame = (game) => {
-    const newGame = new gameSchema(game)
-    newGame
-        .save()
-        .then((savedGame) => savedGame)
-        .catch((error) => {
-            return { message: error.message }
-        })
-    return newGame
+const addGame = async (game) => {
+    try {
+        const newGame = new gameSchema(game)
+        const savedGame = await newGame.save()
+        return savedGame
+    } catch (error) {
+        return { message: error.message }
+    }
 }
 
 const getGames = () => {
@@ -43,7 +42,11 @@ const updateGame = (id, game) => {
 }
 
 const getGamesByEditionSorted = async (edition) => {
-    return await gameSchema.find({ edition: edition }).sort({ totalPoints: 1 })
+    return await gameSchema.find({ edition: edition }).sort({ totalPoints: -1 })
+}
+
+const getAllGamesSortedByScore = async () => {
+    return await gameSchema.find().sort({ totalPoints: -1 })
 }
 
 // const deleteGame = (id) => {
@@ -61,5 +64,6 @@ export {
     getGame,
     updateGame,
     getGamesByEditionSorted,
+    getAllGamesSortedByScore,
     // deleteGame
 }

@@ -7,6 +7,18 @@ import {
 } from "../services/votesService.js"
 import Game from "../models/games.js"
 
+export const createJudge = async (req, res) => {
+    const { name } = req.body
+    const newJudge = new judgesSchema({ name })
+
+    try {
+        await newJudge.save()
+        res.status(201).json(newJudge)
+    } catch (error) {
+        res.status(400).json({ message: error.message })
+    }
+}
+
 export const getJudges = async (req, res) => {
     const findedJudges = await judgesSchema
         .find()
