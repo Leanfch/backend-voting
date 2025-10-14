@@ -1,5 +1,5 @@
 import Vote from "../models/votes.js"
-import Judge from "../models/judges.js"
+import User from "../models/users.js"
 import Game from "../models/games.js"
 
 const submitVote = async (
@@ -10,24 +10,26 @@ const submitVote = async (
     soundPoints,
     themePoints
 ) => {
-    const judge = await Judge.findById(judgeId)
+    // Buscar el usuario (juez) en lugar de la colección judges
+    const judge = await User.findById(judgeId)
     const game = await Game.findById(gameId)
-    // const judge = await Judge.findById(judgeId);
-    // if (!judge) {
-    //     throw new Error("Juez no encontrado.");
-    // }
 
-    // const game = await Game.findById(gameId);
-    // if (!game) {
-    //     throw new Error("Juego no encontrado.");
-    // }
-    if (!judge || !game) {
-        throw new Error("Juez o juego no encontrado.")
+    if (!judge) {
+        throw new Error("Juez no encontrado.")
+    }
+
+    if (!game) {
+        throw new Error("Juego no encontrado.")
+    }
+
+    // Verificar que el usuario sea realmente un juez
+    if (judge.role !== 'juez') {
+        throw new Error("El usuario no tiene permisos para votar.")
     }
 
     const existingVote = await Vote.findOne({
-        judge: judge._id,
-        game: game._id,
+        judgeId: judgeId,
+        gameId: gameId,
     })
 
     if (existingVote) {
@@ -35,8 +37,8 @@ const submitVote = async (
     }
 
     const newVote = new Vote({
-        judge,
-        game,
+        judgeId,
+        gameId,
         gameplayPoints,
         artPoints,
         soundPoints,
@@ -49,18 +51,22 @@ const submitVote = async (
 }
 
 const getVotesByJudge = async (judgeId) => {
-    const votes = await Vote.find({ "judge._id": judgeId })
+    const votes = await Vote.find({ judgeId: judgeId })
+        .populate('gameId')
+        .populate('judgeId', '-password')
 
     return votes
 }
 
 const getVotesByGame = async (gameId) => {
-    const votes = await Vote.find({ "game._id": gameId })
+    const votes = await Vote.find({ gameId: gameId })
+        .populate('judgeId', '-password')
+        .populate('gameId')
     return votes
 }
 
 const calculateAverageScoresForGame = async (gameId) => {
-    const votes = await Vote.find({ "game._id": gameId })
+    const votes = await Vote.find({ gameId: gameId })
 
     if (votes.length === 0) {
         return {

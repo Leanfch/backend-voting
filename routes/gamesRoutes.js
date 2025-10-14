@@ -5,7 +5,7 @@ import {
     updateGameById,
     getGamesByEditionSortedController,
     getAllGamesSortedByScoreController,
-    // deleteGameById,
+    deleteGameById,
     createGame,
 } from "../controllers/gamesController.js"
 import { authRequire, requireRole } from "../middleware/validateToken.js"
@@ -29,7 +29,7 @@ gamesRoutes.get("/:id", getGameById)
 // actualizar un juego (solo usuarios)
 gamesRoutes.put("", authRequire, requireRole('usuario'), updateGameById)
 
-// borrar un juego
-// gamesRoutes.delete("", deleteGameById);
+// borrar un juego (solo usuarios)
+gamesRoutes.delete("", authRequire, requireRole('usuario'), deleteGameById)
 
 export default gamesRoutes

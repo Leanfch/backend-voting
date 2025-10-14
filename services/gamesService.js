@@ -49,14 +49,17 @@ const getAllGamesSortedByScore = async () => {
     return await gameSchema.find().sort({ totalPoints: -1 })
 }
 
-// const deleteGame = (id) => {
-//     return gameSchema
-//         .findOneAndDelete({ _id: id })
-//         .then((game) => game)
-//         .catch((error) => {
-//             return { message: error.message };
-//         });
-// };
+const deleteGame = async (id) => {
+    try {
+        const deletedGame = await gameSchema.findByIdAndDelete(id)
+        if (!deletedGame) {
+            throw new Error('Juego no encontrado')
+        }
+        return deletedGame
+    } catch (error) {
+        throw new Error(error.message)
+    }
+}
 
 export {
     addGame,
@@ -65,5 +68,5 @@ export {
     updateGame,
     getGamesByEditionSorted,
     getAllGamesSortedByScore,
-    // deleteGame
+    deleteGame
 }

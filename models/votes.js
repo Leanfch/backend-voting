@@ -1,10 +1,16 @@
 import { Schema, model } from "mongoose"
-import { judgeSchema } from "../models/judges.js"
-import { gameSchema } from "../models/games.js"
 
 const voteSchema = Schema({
-    judge: judgeSchema,
-    game: gameSchema,
+    judgeId: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+    },
+    gameId: {
+        type: Schema.Types.ObjectId,
+        ref: 'Games',
+        required: true,
+    },
     gameplayPoints: {
         type: Number,
         min: 1,
@@ -29,6 +35,8 @@ const voteSchema = Schema({
         max: 10,
         required: true,
     },
+}, {
+    timestamps: true
 })
 
 const Vote = model("Vote", voteSchema)

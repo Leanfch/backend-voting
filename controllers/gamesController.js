@@ -5,7 +5,7 @@ import {
     updateGame,
     getGamesByEditionSorted,
     getAllGamesSortedByScore,
-    // deleteGame,
+    deleteGame,
 } from "../services/gamesService.js"
 
 const createGame = async (req, res) => {
@@ -59,11 +59,35 @@ const getAllGamesSortedByScoreController = async (req, res) => {
     res.json(games)
 }
 
-// const deleteGameById = async (req, res) => {
-//     const { id } = req.body;
-//     const deletedGame = await deleteGame(id);
-//     res.json(deletedGame);
-// };
+const deleteGameById = async (req, res) => {
+    try {
+        console.log('=== DELETING GAME ===')
+        console.log('User from token:', req.user)
+        console.log('Request body:', req.body)
+
+        const { id } = req.body
+
+        if (!id) {
+            return res.status(400).json({ message: 'ID del juego es requerido' })
+        }
+
+        const deletedGame = await deleteGame(id)
+
+        console.log('Game deleted:', deletedGame)
+        console.log('===================')
+
+        res.json({
+            message: 'Juego eliminado correctamente',
+            game: deletedGame
+        })
+    } catch (error) {
+        console.error('Error deleting game:', error)
+        res.status(500).json({
+            message: 'Error al eliminar el juego',
+            error: error.message
+        })
+    }
+}
 
 export {
     createGame,
@@ -72,5 +96,5 @@ export {
     updateGameById,
     getGamesByEditionSortedController,
     getAllGamesSortedByScoreController,
-    // deleteGameById
+    deleteGameById
 }
