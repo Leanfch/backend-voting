@@ -38,12 +38,13 @@ const getGameById = async (req, res) => {
 }
 
 const updateGameById = async (req, res) => {
-    const { id, name, genre, members, edition } = req.body
+    const { id, name, genre, members, edition, photo } = req.body
     const updatedGame = await updateGame(id, {
         name,
         genre,
         members,
         edition,
+        photo,
     })
     res.json(updatedGame)
 }
